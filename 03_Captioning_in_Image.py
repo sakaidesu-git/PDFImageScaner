@@ -2,7 +2,7 @@ from pathlib import Path
 from ollama import chat
 
 
-IMAGE_DIR = Path("./prs095_extracted")
+IMAGE_DIR_PATTERN = "*_extracted"
 
 PROMPT = """
 この画像を要件定義書・設計書のGAP分析に利用します。
@@ -39,8 +39,12 @@ def main():
 
     image_files = []
 
-    for ext in ["*.png", "*.jpg", "*.jpeg", "*.webp"]:
-        image_files.extend(IMAGE_DIR.rglob(ext))
+    image_dirs = sorted(
+        path for path in Path.cwd().glob(IMAGE_DIR_PATTERN) if path.is_dir()
+    )
+    for image_dir in image_dirs:
+        for ext in ["*.png", "*.jpg", "*.jpeg", "*.webp"]:
+            image_files.extend(image_dir.rglob(ext))
 
     print(f"画像数: {len(image_files)}")
 
